@@ -1,0 +1,10 @@
+<div class="history-container">
+  <h2>Conversion History</h2>
+  <div *ngIf="history().length === 0" class="no-history">
+    No conversions yet.
+  </div>
+  <div *ngFor="let record of history()" class="record">
+    <p>{{ record.amount }} {{ record.from }} = {{ record.result | number:'1.2-2' }} {{ record.to }}</p>
+    <p>Date: {{ record.date }} | Time: {{ record.timestamp | date:'short' }}</p>
+  </div>
+</div>

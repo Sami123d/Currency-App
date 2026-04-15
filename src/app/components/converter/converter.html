@@ -1,0 +1,44 @@
+<div class="converter-container">
+  <h2>Currency Converter</h2>
+  <form [formGroup]="form" (ngSubmit)="convert()">
+    <mat-form-field>
+      <mat-label>From Currency</mat-label>
+      <mat-select formControlName="from">
+        <mat-option *ngFor="let curr of currencies()" [value]="curr.code">
+          {{ curr.code }} - {{ curr.name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>To Currency</mat-label>
+      <mat-select formControlName="to">
+        <mat-option *ngFor="let curr of currencies()" [value]="curr.code">
+          {{ curr.code }} - {{ curr.name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Amount</mat-label>
+      <input matInput type="number" formControlName="amount" min="0.01" step="0.01">
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Exchange Rate Date</mat-label>
+      <input matInput [matDatepicker]="picker" formControlName="date">
+      <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid || loading()">
+      Convert
+    </button>
+
+    <mat-spinner *ngIf="loading()" diameter="30"></mat-spinner>
+  </form>
+
+  <div *ngIf="result() !== null" class="result">
+    <h3>Result: {{ result() | number:'1.2-2' }}</h3>
+  </div>
+</div>
