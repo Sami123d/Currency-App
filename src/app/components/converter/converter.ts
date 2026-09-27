@@ -47,6 +47,8 @@ export class Converter implements OnInit {
   form: FormGroup;
   result = signal<number | null>(null);
   loading = signal(false);
+  error = signal<string | null>(null);
+  readonly maxDate = new Date();
 
   constructor(
     private fb: FormBuilder,
@@ -74,7 +76,10 @@ export class Converter implements OnInit {
         }));
         this.currencies.set(currs);
       },
-      error: (err) => console.error(err),
+      error: (err) => {
+        console.error(err);
+        this.error.set('Could not load the currency list. Please try again later.');
+      },
     });
   }
 
@@ -88,6 +93,7 @@ export class Converter implements OnInit {
   convert() {
     if (this.form.invalid) return;
     this.loading.set(true);
+    this.error.set(null);
     const { from, to, amount, date } = this.form.value;
     const dateStr = this.formatLocalDate(date);
     const todayStr = this.formatLocalDate(new Date());
@@ -103,7 +109,12 @@ export class Converter implements OnInit {
           rate = data.data[to];
         } else {
           // Historical data: data.data["2026-04-08"]["INR"]
-          rate = data.data[dateStr][to];
+          rate = data.data[dateStr]?.[to];
+        }
+        if (typeof rate !== 'number') {
+          this.error.set(`No ${to} rate available for ${dateStr}.`);
+          this.loading.set(false);
+          return;
         }
         const res = amount * rate;
         this.result.set(res);
@@ -119,6 +130,7 @@ export class Converter implements OnInit {
       },
       error: (err) => {
         console.error(err);
+        this.error.set('Conversion failed. The exchange-rate service may be unavailable.');
         this.loading.set(false);
       },
     });

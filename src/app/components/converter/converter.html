@@ -26,7 +26,7 @@
 
     <mat-form-field>
       <mat-label>Exchange Rate Date</mat-label>
-      <input matInput [matDatepicker]="picker" formControlName="date">
+      <input matInput [matDatepicker]="picker" [max]="maxDate" formControlName="date">
       <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
       <mat-datepicker #picker></mat-datepicker>
     </mat-form-field>
@@ -37,6 +37,8 @@
 
     <mat-spinner *ngIf="loading()" diameter="30"></mat-spinner>
   </form>
+
+  <div *ngIf="error()" class="error" role="alert">{{ error() }}</div>
 
   <div *ngIf="result() !== null" class="result">
     <h3>Result: {{ result() | number:'1.2-2' }}</h3>
